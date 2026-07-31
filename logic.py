@@ -77,21 +77,6 @@ class Logic(QMainWindow, Ui_MainWindow):
         checking_balance: float = 0.0
         savings_balance: float = 0.0
 
-        if first_name == '' and last_name == '' and pin == '':
-            QMessageBox.warning(self, 'Warning', 'Please enter account information.')
-        elif first_name == '' and last_name == "":
-            QMessageBox.warning(self, 'Warning', 'Please enter first and last name.')
-        elif first_name == '':
-            QMessageBox.warning(self, 'Warning', 'Please enter first name.')
-        elif last_name == '':
-            QMessageBox.warning(self, 'Warning', 'Please enter last name.')
-        elif pin == '':
-            QMessageBox.warning(self, 'Warning', 'Please enter pin.')
-        elif pin.isalpha():
-            QMessageBox.warning(self, 'Warning', 'Invalid pin.')
-        elif len(pin) < 4:
-            QMessageBox.warning(self, 'Warning', 'Pin must be 4 digits.')
-
         try:
             with open('users.csv', 'r') as csv_file:
                 content = csv.reader(csv_file)
@@ -111,19 +96,33 @@ class Logic(QMainWindow, Ui_MainWindow):
                         self.current_last_name = csv_last_name
                         self.current_pin = csv_pin
                         break
+                if first_name == '' and last_name == '' and pin == '':
+                    QMessageBox.warning(self, 'Warning', 'Please enter account information.')
+                elif first_name == '' and last_name == "":
+                    QMessageBox.warning(self, 'Warning', 'Please enter first and last name.')
+                elif first_name == '':
+                    QMessageBox.warning(self, 'Warning', 'Please enter first name.')
+                elif last_name == '':
+                    QMessageBox.warning(self, 'Warning', 'Please enter last name.')
+                elif pin == '':
+                    QMessageBox.warning(self, 'Warning', 'Please enter pin.')
+                elif pin.isalpha():
+                    QMessageBox.warning(self, 'Warning', 'Invalid pin.')
+                elif len(pin) < 4:
+                    QMessageBox.warning(self, 'Warning', 'Pin must be 4 digits.')
+                else:
+                    if successful_login:
+                        self.checking.set_name(full_name)
+                        self.savings.set_name(full_name)
+                        self.checking.set_balance(checking_balance)
+                        self.savings.set_balance(savings_balance)
+                        self.label_welcomeName.setText(f'Welcome {full_name}!')
+                        self.stackedWidget.setCurrentIndex(2)
+                    else:
+                        QMessageBox.warning(self, 'Warning', "Invalid Name or Pin.")
 
         except FileNotFoundError:
             QMessageBox.warning(self, 'Error', 'User file not found.')
-
-        if successful_login:
-            self.checking.set_name(full_name)
-            self.savings.set_name(full_name)
-            self.checking.set_balance(checking_balance)
-            self.savings.set_balance(savings_balance)
-            self.label_welcomeName.setText(f'Welcome {full_name}!')
-            self.stackedWidget.setCurrentIndex(2)
-        else:
-            QMessageBox.warning(self, 'Warning', "Invalid Name or Pin.")
 
     def account_cancel_button(self):
         """
